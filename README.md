@@ -85,6 +85,15 @@
                 --args u64:5555
         (8) apt init
                 将url和私钥配置到.apt目录，上面的命令就可以不用指定url和私钥了
+   
+    合约升级
+    7. aptos move publish --upgrade-policy 
+        `arbitrary`, `compatible`, `immutable` 对应 0， 1，2
+        0 不做任何检查，强制替换code,
+        1 做兼容性检查(同样的public 函数，不能改变已有Resource的内存布局)
+        2 禁止升级
+        每次publish的时候会比较链上的policy和此次publish的policy(默认是1),
+        只有此次的policy小于链上的policy时才允许合约升级
     ```
 
 7. ****Awesome Move****
