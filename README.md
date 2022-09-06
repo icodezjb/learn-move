@@ -120,10 +120,10 @@
 
 11. **[Global Storage - Operators](https://move-language.github.io/move/global-storage-operators.html#global-storage---operators)**
 
-   用key修饰的struct, 可以通过 move_to 放到链上，有相应的地址
-   用store修饰的struct, 一般作为被key 修饰的struct的字段, 存在链上
-   用copy修饰的struct，可以隐式的复制struct的值，
-   用drop修饰的struct, 一般作为被key 修饰的struct的字段, 从链上删除
+- 用key修饰的struct, 可以通过 move_to 放到链上，有相应的地址
+- 用store修饰的struct, 一般作为被key 修饰的struct的字段, 存在链上
+- 用copy修饰的struct，可以隐式的复制struct的值，
+- 用drop修饰的struct, 一般作为被key 修饰的struct的字段, 从链上删除
 
    key,store,drop控制的是我的资源要不要放到链上，要不要从链上删除，copy 更多的是用到中间处理过程中
 
@@ -162,3 +162,4 @@
 
     (Input type选Hex, Hash算法选SHA3-256)
 
+13. [如何在Aptos上发行coin?](./mycoin/README.md)
