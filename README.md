@@ -101,21 +101,21 @@
 
    https://github.com/MystenLabs/awesome-move
 
-9. ****Move Tutorial:****
+9.  ****Move Tutorial:****
 
-   https://github.com/move-language/move/tree/main/language/documentation/tutorial
+    https://github.com/move-language/move/tree/main/language/documentation/tutorial
 
 10. ****明星公链Aptos初体验--发送交易和构建合约****
 
-   https://learnblockchain.cn/article/4466
+    https://learnblockchain.cn/article/4466
 
-   ****无需合约，在Aptos上发行一个nft****
+    ****无需合约，在Aptos上发行一个nft****
 
-   https://learnblockchain.cn/article/4473
+    https://learnblockchain.cn/article/4473
 
-   ****全方位讲解Move开发测试部署工具栈****
+    ****全方位讲解Move开发测试部署工具栈****
 
-   https://learnblockchain.cn/article/3005
+    https://learnblockchain.cn/article/3005
 
 
 11. **[Global Storage - Operators](https://move-language.github.io/move/global-storage-operators.html#global-storage---operators)**
