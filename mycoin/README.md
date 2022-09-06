@@ -72,6 +72,14 @@ aptos move run --function-id 0x1::coin::transfer \
     --private-key 0xc43f88efcf5b14dc9ba00f3d73e8a455df260e730133fcd81386df1d463d0332
 ```
 
+### query the coin
+```bash
+# query owner
+aptos account list --account 0xd02617efb7147fc1b313d6a6feadef2fc5b21e38268cea50f51ec2222ae64a2f
+# quert receiver
+aptos account list --account 0x2e39b3b448114792d41ea4ee26f536595a001f734f94b5bd56ae3de6c3096cb0
+```
+
 ### Ditto for XBTC and XETH
 ```bash
 aptos move run \
