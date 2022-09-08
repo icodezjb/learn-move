@@ -1,2 +1,3 @@
 *.aptos/
 */build/
+*/node_modules/
