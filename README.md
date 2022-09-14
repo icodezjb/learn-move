@@ -25,7 +25,11 @@
         
         水龙头
         aptos-faucet --chain-id TESTING --mint-key-file-path "./test/mint.key" --address 0.0.0.0 --port 8000 --server-url http://127.0.0.1:8080
-        
+        领取localnet测试币
+        curl --location --request POST 'http://127.0.0.1:5003/mint?amount=1000&address=77f0f9277dbed23667676bd2e3d7a6142e54954b79040de0e29b1730321a7792'
+        领取aptos devnet测试币
+        curl --location --request POST 'https://faucet.devnet.aptoslabs.com/mint?amount=1000&address=77f0f9277dbed23667676bd2e3d7a6142e54954b79040de0e29b1730321a7792'
+    
     2. 区块浏览器
         https://explorer.devnet.aptos.dev/?network=local
     
@@ -106,6 +110,213 @@
     Sui 官方钱包(浏览器插件): https://docs.sui.io/devnet/explore/wallet-browser
     Sui 浏览器: https://explorer.devnet.sui.io/
     Sui 官方文档: https://docs.sui.io/learn
+   
+    1. 源码编译
+      git clone https://github.com/MystenLabs/sui.git
+      git checkout devnet-0.9.0
+      cargo build --release
+      
+      得 sui,sui-node,sui-faucet,sui-test-validator
+    
+    2. 本地测试网搭建1(快速启动,数据不复用)
+      sui-test-validator会在临时目录下创建4个validators+1个fullnode的local测试网(faucet账户1000个gas object,即 100000000000)
+      (1) 执行命令, 起测试网
+      $ sui-test-validator
+      Fullnode RPC URL: http://127.0.0.1:9000
+      Fullnode Websocket URL: 127.0.0.1:9001
+      Gateway RPC URL: http://127.0.0.1:5001
+      Faucet URL: http://127.0.0.1:9123
+
+      (2) 检查代理, 浏览器打开 https://explorer.devnet.sui.io/, 选择Local
+
+      (3) 执行命令, 领测试币
+      $ curl -H "Content-Type: application/json" -X POST -d '{"recipient":"0x017614990a894ad7c26f5bd174ea9c8095b06242"}' "http://127.0.0.1:9123/faucet"
+      {"ok":true}
+    
+    3. 本地测试网搭建2(重启后数据可复用)
+      默认目录(linux): ~/.sui/
+      (1) 生成genesis及配置文件(4个validators+1个fullnode)
+      $ sui genesis
+      2022-09-14T06:01:24.030408Z  INFO sui_config::genesis_config: Creating accounts and gas objects...
+      2022-09-14T06:01:24.069524Z  INFO sui::sui_commands: Network genesis completed.
+      2022-09-14T06:01:24.070775Z  INFO sui::sui_commands: Network config file is stored in "/home/chain/.sui/sui_config/network.yaml".
+      2022-09-14T06:01:24.070783Z  INFO sui::sui_commands: Client keystore is stored in "/home/chain/.sui/sui_config/sui.keystore".
+      2022-09-14T06:01:24.070872Z  INFO sui::sui_commands: Gateway config file is stored in "/home/chain/.sui/sui_config/gateway.yaml".
+      2022-09-14T06:01:24.070970Z  INFO sui::sui_commands: Client config file is stored in "/home/chain/.sui/sui_config/client.yaml".
+
+      (2) validators 组网
+      $ sui start
+   
+      (3) 启动fullnode(http和websocket服务)
+      $ sui-node --config-path ~/.sui/sui_config/fullnode.yaml
+   
+      (4) 检查代理, 浏览器打开 https://explorer.devnet.sui.io/, 选择Local
+   
+      (5) 检查代理, 启动水龙头
+      $ sui-faucet
+      2022-09-14T06:09:15.489118Z  INFO sui_faucet: Max concurrency: 30.
+      2022-09-14T06:09:15.489631Z  INFO sui_faucet: Initialize wallet from config path: "/home/chain/.sui/sui_config/client.yaml"
+      2022-09-14T06:09:15.555282Z  INFO sui_storage::lock_service: LockService command processing loop started
+      2022-09-14T06:09:15.555280Z  INFO sui_storage::lock_service: LockService queries processing loop started
+      2022-09-14T06:09:15.577705Z  INFO sui_faucet: Starting Prometheus HTTP endpoint at 0.0.0.0:9184
+      2022-09-14T06:09:15.579142Z  INFO sui_faucet::faucet::simple_faucet: SimpleFaucet::new with active address: 0x07eab5bb4dbdffd5d2c12c6431da8609ae3b5dd8
+      2022-09-14T06:09:15.600278Z  INFO sui_faucet: listening on 127.0.0.1:5003
+   
+      (6) 检查水龙头服务
+      $ curl http://127.0.0.1:5003
+      OK
+   
+      (7) 执行命令, 领测试币
+      $ curl -H "Content-Type: application/json" \
+        -X POST \
+        -d '{"FixedAmountRequest":{"recipient":"0x017614990a894ad7c26f5bd174ea9c8095b06242"}}' \
+        "http://127.0.0.1:5003/gas"
+   
+    4. 普通转账
+      (1) 查看默认账户(用于签名交易)
+      $ sui client active-address
+      0x07eab5bb4dbdffd5d2c12c6431da8609ae3b5dd8
+      
+      (2) 查看当前客户端下的所有账户
+      $ sui client addresses
+      Showing 5 results.
+      0x07eab5bb4dbdffd5d2c12c6431da8609ae3b5dd8
+      0x143eaa9b239382f6a5c360c0c407571183efea5a
+      0x62427915aba4c593e4d6092ebe8740f3de73d413
+      0x7ab69f783fdd9f3f1021cb6249bd9b373be950e3
+      0xc2bfdd8e835d9419414eb20d6d85da54b6d7ef83
+   
+      (3) 查看默认账户所有的objects
+      $ sui client objects
+                      Object ID                  |  Version   |                    Digest                    |   Owner Type    |               Object Type               
+      ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      0x25500da23617b95f5cc40c6695f12ac97c29b9fa |     1      | sr4wny/27v+VuHZhsTyv5UQCuXa33MijQBuCJTi4UVg= |  AddressOwner   |      0x2::coin::Coin<0x2::sui::SUI>     
+      0x619d9baa1fc679736a16298f433057874ef1c9cb |     1      | oG7nB0qgghNjvKQS2iRj/2ffXFcM4TzqgtyFNP8cFmA= |  AddressOwner   |      0x2::coin::Coin<0x2::sui::SUI>     
+      0x86169c6f94351861f4203d9bec4074483ece743b |     1      | NagZV0AvyYeBM5T4+Qqewu9dhrOsWoI6N/F1s3hshfU= |  AddressOwner   |      0x2::coin::Coin<0x2::sui::SUI>     
+      0x9f9a9bce97390e0cc2580b337f6f25c77b031668 |     1      | sD/Cpl/DVpETNNQW8iY+dfiEC4UzBbQrx0X5bffF7t0= |  AddressOwner   |      0x2::coin::Coin<0x2::sui::SUI>     
+      0xa98efc17c852db6970541e31409a1c9e83d26f02 |     1      | n9HhBXkhhGytAGiugM9QPxDb/nAqoMUc/lFSjiGixCM= |  AddressOwner   |      0x2::coin::Coin<0x2::sui::SUI>     
+      Showing 5 results.
+
+      (4) 查看指定object
+      $ sui client object --id 0x25500da23617b95f5cc40c6695f12ac97c29b9fa
+      ----- Move Object (0x25500da23617b95f5cc40c6695f12ac97c29b9fa[1]) -----
+      Owner: Account Address ( 0x07eab5bb4dbdffd5d2c12c6431da8609ae3b5dd8 )
+      Version: 1
+      Storage Rebate: 16
+      Previous Transaction: Avc/mpGqjUKSspkklOHI7d0xTkFdx36e2hRowMPrP+w=
+      ----- Data -----
+      type: 0x2::coin::Coin<0x2::sui::SUI>
+      balance: 99949907
+      id: 0x25500da23617b95f5cc40c6695f12ac97c29b9fa
+      
+      (5) 查看指定账户余额
+      $ sui client gas --address 0x07eab5bb4dbdffd5d2c12c6431da8609ae3b5dd8
+                       Object ID                  |  Gas Value 
+      ----------------------------------------------------------------------
+      0x25500da23617b95f5cc40c6695f12ac97c29b9fa |  99949746  
+      0x619d9baa1fc679736a16298f433057874ef1c9cb |  99949907  
+      0x86169c6f94351861f4203d9bec4074483ece743b |  99949907  
+      0x9f9a9bce97390e0cc2580b337f6f25c77b031668 |  99949907  
+      0xa98efc17c852db6970541e31409a1c9e83d26f02 |  99949907
+
+      (6) 转 500 sui 到 0x017614990a894ad7c26f5bd174ea9c8095b06242
+      $ sui client transfer-sui \
+        --amount 100 \
+        --to 0x017614990a894ad7c26f5bd174ea9c8095b06242 \
+        --sui-coin-object-id 0x25500da23617b95f5cc40c6695f12ac97c29b9fa \
+        --gas-budget 10000
+
+      ----- Certificate ----
+      Transaction Hash: 9WNSiDt4kHvHJbuwcYPgA5qMXpLzFRadirDtXpuMaEU=
+      Transaction Signature: AA==@o1IqHwSDateWAaxquRdrk0nlSrn0LszM9YTTV4HAn0Urlo2mOK07ppSCXEWHutsZQffMdzkC2Ri8vfwr4FwxBA==@DRaRxLuGWh9Y7gU0bePmmBNaSF+xXrZita1rfGgdZa0=
+      Signed Authorities Bitmap: RoaringBitmap<[0, 1, 2]>
+      Transaction Kind : Transfer SUI
+      Recipient : 0x017614990a894ad7c26f5bd174ea9c8095b06242
+      Amount: 100
+
+      ----- Transaction Effects ----
+      Status : Success
+      Created Objects:
+      - ID: 0x7cbeb294db017cc6c1f95e1151738642640fa36e , Owner: Account Address ( 0x017614990a894ad7c26f5bd174ea9c8095b06242 )
+        Mutated Objects:
+      - ID: 0x25500da23617b95f5cc40c6695f12ac97c29b9fa , Owner: Account Address ( 0x07eab5bb4dbdffd5d2c12c6431da8609ae3b5dd8 )
+
+    5. sui的合并与拆解
+      (1) merge-coin
+      合并前
+      $ sui client gas --address 0x07eab5bb4dbdffd5d2c12c6431da8609ae3b5dd8
+                       Object ID                  |  Gas Value 
+      ----------------------------------------------------------------------
+      0x25500da23617b95f5cc40c6695f12ac97c29b9fa |  99949746  
+      0x619d9baa1fc679736a16298f433057874ef1c9cb |  99949907  
+      0x86169c6f94351861f4203d9bec4074483ece743b |  99949907  
+      0x9f9a9bce97390e0cc2580b337f6f25c77b031668 |  99949907  
+      0xa98efc17c852db6970541e31409a1c9e83d26f02 |  99949907
+      
+      将 0xa98efc17c852db6970541e31409a1c9e83d26f02 合并到 0x9f9a9bce97390e0cc2580b337f6f25c77b031668
+      $ sui client merge-coin \
+        --primary-coin 0x9f9a9bce97390e0cc2580b337f6f25c77b031668 \
+        --coin-to-merge 0xa98efc17c852db6970541e31409a1c9e83d26f02 \
+        --gas-budget 1000
+      ----- Certificate ----
+      Transaction Hash: tolTzRhi+D0i1OxW7Av/lAAj0AlSvEwJTHcThXwiy9E=
+      Transaction Signature: AA==@yKbytoEFIkG4hgD69w4B/x0OpOdeFuwTYwMNmLYWC3ccC2HHqj10d3EQJhUddjiXOSA4DTrvcDXg+RbQfi5jCg==@DRaRxLuGWh9Y7gU0bePmmBNaSF+xXrZita1rfGgdZa0=
+      Signed Authorities Bitmap: RoaringBitmap<[0, 2, 3]>
+      Transaction Kind : Call
+      Package ID : 0x2
+      Module : coin
+      Function : join
+      Arguments : ["0x9f9a9bce97390e0cc2580b337f6f25c77b031668", "0xa98efc17c852db6970541e31409a1c9e83d26f02"]
+      Type Arguments : ["0x2::sui::SUI"]
+      ----- Transaction Effects ----
+      Status : Success
+      Mutated Objects:
+      - ID: 0x25500da23617b95f5cc40c6695f12ac97c29b9fa , Owner: Account Address ( 0x07eab5bb4dbdffd5d2c12c6431da8609ae3b5dd8 )
+      - ID: 0x9f9a9bce97390e0cc2580b337f6f25c77b031668 , Owner: Account Address ( 0x07eab5bb4dbdffd5d2c12c6431da8609ae3b5dd8 )
+        Deleted Objects:
+      - ID: 0xa98efc17c852db6970541e31409a1c9e83d26f02
+        ----- Merge Coin Results ----
+        Updated Coin : Coin { id: 0x9f9a9bce97390e0cc2580b337f6f25c77b031668, value: 199899814 }
+        Updated Gas : Coin { id: 0x25500da23617b95f5cc40c6695f12ac97c29b9fa, value: 99949299 }
+
+      合并后
+      $ sui client gas --address 0x07eab5bb4dbdffd5d2c12c6431da8609ae3b5dd8
+                       Object ID                  |  Gas Value 
+      ----------------------------------------------------------------------
+      0x25500da23617b95f5cc40c6695f12ac97c29b9fa |  99949299  
+      0x619d9baa1fc679736a16298f433057874ef1c9cb |  99949907  
+      0x86169c6f94351861f4203d9bec4074483ece743b |  99949907  
+      0x9f9a9bce97390e0cc2580b337f6f25c77b031668 |  199899814
+
+      (2) split-coin
+      2等分一个coin object
+      $ sui client split-coin --coin-id 0x9f9a9bce97390e0cc2580b337f6f25c77b031668 --count 2  --gas-budget 1000
+      ----- Certificate ----
+      Transaction Hash: AIxZ7PdmmIe1xrDmSj9mVfnd+CH3bowZhNQemCDNX80=
+      Transaction Signature: AA==@MSJHoyxe5TQTbcc4F3/aqXEMzczVEE5gyvHmPDc6+md9sBbz0aX4RnZl7B67Yhj8/fgXsL/ZdsubuidO1w5qBA==@DRaRxLuGWh9Y7gU0bePmmBNaSF+xXrZita1rfGgdZa0=
+      Signed Authorities Bitmap: RoaringBitmap<[0, 2, 3]>
+      Transaction Kind : Call
+      Package ID : 0x2
+      Module : coin
+      Function : split_n
+      Arguments : ["0x9f9a9bce97390e0cc2580b337f6f25c77b031668", 2]
+      Type Arguments : ["0x2::sui::SUI"]
+      ----- Transaction Effects ----
+      Status : Success
+      Created Objects:
+      - ID: 0xcce677fe40fb33fb5825498b2d379985c4f080c4 , Owner: Account Address ( 0x07eab5bb4dbdffd5d2c12c6431da8609ae3b5dd8 )
+        Mutated Objects:
+      - ID: 0x25500da23617b95f5cc40c6695f12ac97c29b9fa , Owner: Account Address ( 0x07eab5bb4dbdffd5d2c12c6431da8609ae3b5dd8 )
+      - ID: 0x9f9a9bce97390e0cc2580b337f6f25c77b031668 , Owner: Account Address ( 0x07eab5bb4dbdffd5d2c12c6431da8609ae3b5dd8 )
+        ----- Split Coin Results ----
+        Updated Coin : Coin { id: 0x9f9a9bce97390e0cc2580b337f6f25c77b031668, value: 99949907 }
+        New Coins : Coin { id: 0xcce677fe40fb33fb5825498b2d379985c4f080c4, value: 99949907 }
+        Updated Gas : Coin { id: 0x25500da23617b95f5cc40c6695f12ac97c29b9fa, value: 99948788 }
+   
+   
+   
+   
+   
     ```
 
 3. ****Awesome Move****
@@ -175,4 +386,4 @@
 
 8. [如何在Aptos上发行coin?](./mycoin/README.md)
 9. [如何在Aptos上用多签账户转账(coin)?](./multisig-transaction/README.md)
-10. [Why We Created Sui Move](https://medium.com/mysten-labs/why-we-created-sui-move-6a234656c36b)
+10. [为什么要创造 Sui 版本的Move](https://move-china.com/topic/144)
