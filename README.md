@@ -290,7 +290,10 @@
 
       (2) split-coin
       2等分一个coin object
-      $ sui client split-coin --coin-id 0x9f9a9bce97390e0cc2580b337f6f25c77b031668 --count 2  --gas-budget 1000
+      $ sui client split-coin \
+           --coin-id 0x9f9a9bce97390e0cc2580b337f6f25c77b031668 \
+           --count 2  \
+           --gas-budget 1000
       ----- Certificate ----
       Transaction Hash: AIxZ7PdmmIe1xrDmSj9mVfnd+CH3bowZhNQemCDNX80=
       Transaction Signature: AA==@MSJHoyxe5TQTbcc4F3/aqXEMzczVEE5gyvHmPDc6+md9sBbz0aX4RnZl7B67Yhj8/fgXsL/ZdsubuidO1w5qBA==@DRaRxLuGWh9Y7gU0bePmmBNaSF+xXrZita1rfGgdZa0=
@@ -313,11 +316,132 @@
         New Coins : Coin { id: 0xcce677fe40fb33fb5825498b2d379985c4f080c4, value: 99949907 }
         Updated Gas : Coin { id: 0x25500da23617b95f5cc40c6695f12ac97c29b9fa, value: 99948788 }
    
+    6. 合约调用
+       sui合约初始化函数init
+       https://github.com/MystenLabs/sui/blob/main/crates/sui-verifier/src/lib.rs#L20
+       
+       每个sui module可以设置一个init函数(在publish的时候完成初始化), 最多只有两个参数, 
+       (TxContext) 或 (Struct, TxContext) 
+
+       (1) 启动临时测试网:
+       $ sui-test-validator 
+       Fullnode RPC URL: http://127.0.0.1:9000
+       Fullnode Websocket URL: 127.0.0.1:9001
+       Gateway RPC URL: http://127.0.0.1:5001
+       Faucet URL: http://127.0.0.1:9123
+
+       (2) 切换目录
+       cd sui/sui_programmability/examples/fungible_tokens
    
+       (3) 准备2个测试账户
+       新建2个目录: account1和account2, 使用sui keytool generate ed25519创建新账户
+       最终结果如下:
+       $ cat account1/0x43e298abf29753ca0638637c98a1b5dfc766bccf.key
+        [
+          "AMbJQfNGb5jYS66TzSCYpOt2SKe/NWy/++6hYKozZoMRpeShBjqifL4lMmw163mrEvLFecoI/QEi9p7tbPTMfFE="
+        ]
    
+       $ cat account1/client.yaml
+       ---
+       keystore:
+       File: /home/chain/workrust/sui/sui_programmability/examples/fungible_tokens/account1/0x43e298abf29753ca0638637c98a1b5dfc766bccf.key
+       gateway:
+       rpc:
+       - "http://127.0.0.1:5001"
+       active_address: "0x43e298abf29753ca0638637c98a1b5dfc766bccf"
+       fullnode: ~
+       
+       $ cat account2/0x967669e360b1d8d860459ca3978d76a895ee292f.key 
+        [
+          "ABcvObCLf9kDCjKTHjxZy28h/yScv61X0qChL+IovRGz52ZHZGwcj1q2IlklJ5ifR+cjl5Ku0bgKodoSGMcu5Kc="
+        ]
+
+       $ cat account2/client.yaml 
+       ---
+       keystore:
+       File: /home/chain/workrust/sui/sui_programmability/examples/fungible_tokens/account2/0x967669e360b1d8d860459ca3978d76a895ee292f.key
+       gateway:
+       rpc:
+       - "http://127.0.0.1:5001"
+       active_address: "0x967669e360b1d8d860459ca3978d76a895ee292f"
+       fullnode: ~
+
+       测试一下:
+       $ sui client --client.config="account1/client.yaml" active-address
+        0x43e298abf29753ca0638637c98a1b5dfc766bccf
+       $ sui client --client.config="account2/client.yaml" active-address
+        0x967669e360b1d8d860459ca3978d76a895ee292f
+       
+       领sui测试币
+       $ curl -H "Content-Type: application/json" \
+         -X POST \
+         -d '{"recipient":"0x43e298abf29753ca0638637c98a1b5dfc766bccf"}' \
+         "http://127.0.0.1:9123/faucet" 
+       {"ok":true}
+       
+       $ curl -H "Content-Type: application/json" \
+         -X POST \
+         -d '{"recipient":"0x967669e360b1d8d860459ca3978d76a895ee292f"}' \
+         "http://127.0.0.1:9123/faucet" 
+       {"ok":true}
+
+       (4) 检查代理, 浏览器打开 https://explorer.devnet.sui.io/, 选择Local
+       
+       (5) 部署 FungibleTokens 合约
+       $ sui client --client.config="account1/client.yaml" publish --gas-budget 10000
+        
+        部分关键信息如下:
+        package      :       0x3fd65126702428870d4f8263c876ee35b6149399
+        abc::Registry:       0x522b9cb893a607409f77d42b484773dd8523f655
+        RegulatedCoin:       0x6473ce590af3b0274e0ab0d1a3ce2886f407bcc4
+        abc::AbcTreasuryCap: 0x92befce929b4194dbf5c989ee4e2ca506dd9c52f
+
+       (6) account1 调用 abc::mint 
+       $ sui client --client.config="account1/client.yaml" call \
+          --gas-budget 10000 \
+          --package 0x3fd65126702428870d4f8263c876ee35b6149399 \
+          --module "abc" \
+          --function "mint" \
+          --args "0x92befce929b4194dbf5c989ee4e2ca506dd9c52f" \
+                 "0x6473ce590af3b0274e0ab0d1a3ce2886f407bcc4" \
+                 10000
+       
+       (7) account1 调用 abc::create
+       $ sui client --client.config="account1/client.yaml" call \
+         --gas-budget 10000 \
+         --package 0x3fd65126702428870d4f8263c876ee35b6149399 \
+         --module "abc" \
+         --function "create" \
+         --args "0x92befce929b4194dbf5c989ee4e2ca506dd9c52f" \
+                "0x967669e360b1d8d860459ca3978d76a895ee292f"  
+       
+       $ sui client --client.config="account1/client.yaml" objects
    
-   
-    ```
+       得新的object 0x11809317d32a9237dc40ef51c3eb76f3904436f0
+       
+       (8) account1 调用 abc::transfer 
+       $ sui client --client.config="account1/client.yaml" call \
+         --gas-budget 10000 \
+         --package 0x3fd65126702428870d4f8263c876ee35b6149399 \
+         --module "abc" \
+         --function "transfer" \
+         --args "0x522b9cb893a607409f77d42b484773dd8523f655" \
+                "0x6473ce590af3b0274e0ab0d1a3ce2886f407bcc4"  
+                1000     \
+               "0x967669e360b1d8d860459ca3978d76a895ee292f"
+      
+       得新的object 0x7ee38468711ada525091db16a36d98b745a24685
+       
+       (9) account2 调用 abc::accept_transfer
+       $ sui client --client.config="account2/client.yaml" call \
+          --gas-budget 10000 \
+          --package 0x3fd65126702428870d4f8263c876ee35b6149399 \
+          --module "abc" \
+          --function "accept_transfer"  \
+          --args "0x522b9cb893a607409f77d42b484773dd8523f655" \
+                 "0x11809317d32a9237dc40ef51c3eb76f3904436f0" \
+                 "0x7ee38468711ada525091db16a36d98b745a24685"
+  ```
 
 3. ****Awesome Move****
 
