@@ -446,7 +446,7 @@
           --args "0x522b9cb893a607409f77d42b484773dd8523f655" \
                  "0x11809317d32a9237dc40ef51c3eb76f3904436f0" \
                  "0x7ee38468711ada525091db16a36d98b745a24685"
-  ```
+
 
 3. ****Awesome Move****
 
@@ -516,3 +516,4 @@
 8. [如何在Aptos上发行coin?](./mycoin/README.md)
 9. [如何在Aptos上用多签账户转账(coin)?](./multisig-transaction/README.md)
 10. [为什么要创造 Sui 版本的Move](https://move-china.com/topic/144)
+11. [Aptos和Sui Move合约开发有哪些异同](./aptos_vs_sui.md)
