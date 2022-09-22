@@ -18,13 +18,18 @@
     Aptos 生态 [https://aptospace.com/](https://aptospace.com/)
     
     普通转账
-    1. 搭建local测试网(需要编译aptos-node, aptos-faucet)
+    1. 搭建local测试网
+        方式1：(需要编译aptos)
+        aptos node run-local-testnet --force-restart --with-faucet
+
+        方式2：(需要编译aptos-node, aptos-faucet)
         https://aptos.dev/nodes/run-a-local-testnet
         
         CARGO_NET_GIT_FETCH_WITH_CLI=true aptos-node --test --test-dir test
         
         水龙头
         aptos-faucet --chain-id TESTING --mint-key-file-path "./test/mint.key" --address 0.0.0.0 --port 8000 --server-url http://127.0.0.1:8080
+        
         领取localnet测试币
         curl --location --request POST 'http://127.0.0.1:5003/mint?amount=1000&address=77f0f9277dbed23667676bd2e3d7a6142e54954b79040de0e29b1730321a7792'
         领取aptos devnet测试币
