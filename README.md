@@ -31,9 +31,9 @@
         aptos-faucet --chain-id TESTING --mint-key-file-path "./test/mint.key" --address 0.0.0.0 --port 8000 --server-url http://127.0.0.1:8080
         
         领取localnet测试币
-        curl --location --request POST 'http://127.0.0.1:5003/mint?amount=1000&address=77f0f9277dbed23667676bd2e3d7a6142e54954b79040de0e29b1730321a7792'
+        curl --location --request POST 'http://127.0.0.1:8000/mint?amount=10000000&address=a24881e004fdbc5550932bb2879129351c21432f21f32d94bf11603bebd9f5c0'
         领取aptos devnet测试币
-        curl --location --request POST 'https://faucet.devnet.aptoslabs.com/mint?amount=1000&address=77f0f9277dbed23667676bd2e3d7a6142e54954b79040de0e29b1730321a7792'
+        curl --location --request POST 'https://faucet.devnet.aptoslabs.com/mint?amount=1000&address=a24881e004fdbc5550932bb2879129351c21432f21f32d94bf11603bebd9f5c0'
     
     2. 区块浏览器
         https://explorer.devnet.aptos.dev/?network=local
