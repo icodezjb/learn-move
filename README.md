@@ -38,10 +38,15 @@
     2. 区块浏览器
         https://explorer.devnet.aptos.dev/?network=local
     
-    3. 安装aptos插件钱包
-        [https://aptos.dev/guides/building-wallet-extension/](https://aptos.dev/guides/building-wallet-extension/)
+    3. 安装aptos插件钱包: https://petra.app/
     
-        钱包连接local测试网(关闭代理, 让钱包连接http://0.0.0.0:8000)
+        钱包连接local测试网(关闭代理, 让钱包连接Localhost)
+        
+        Petra 默认调用 http://localhost:80 领取水龙头测试币
+        所以需要本地配置端口转发(80 -> 8000), 
+        
+        sudo socat TCP4-LISTEN:80,reuseaddr,fork TCP4:127.0.0.1:8000
+   
         如果不用插件钱包，可以编译aptos，可用这个命令行工具转账
       注意: 
         (1) pubkey不等于address(aptos init的时候需要填写私钥,如果没有注册,会打印出account 地址)
