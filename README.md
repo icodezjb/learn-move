@@ -522,3 +522,22 @@
 8. [如何在Aptos上发行coin?](./mycoin/README.md)
 9. [如何在Aptos上用多签账户转账(coin)?](./multisig-transaction/README.md)
 10. [为什么要创造 Sui 版本的Move](https://move-china.com/topic/144)
+
+11. [直接transfer aptosnames域名NFT](./aptosname-transfer)
+
+    publish tx result on aptos mainnet
+   ```txt
+   {
+     "Result": {
+       "transaction_hash": "0xec06c324580919346bd2029ceaf1bdaa969eedce6c74c18a9b935711c784b472",
+       "gas_used": 7532,
+       "gas_unit_price": 100,
+       "sender": "a24881e004fdbc5550932bb2879129351c21432f21f32d94bf11603bebd9f5c0",
+       "sequence_number": 4,
+       "success": true,
+       "timestamp_us": 1666328470913637,
+       "version": 6676603,
+       "vm_status": "Executed successfully"
+     }
+   }
+   ```

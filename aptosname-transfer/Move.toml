@@ -1,0 +1,18 @@
+[package]
+name = 'aptosname-transfer'
+version = '1.0.0'
+
+[dependencies.AptosFramework]
+local = "../../aptos-core/aptos-move/framework/aptos-framework/"
+[dependencies.AptosToken]
+local = "../../aptos-core/aptos-move/framework/aptos-token/"
+
+
+[addresses]
+myself = "0xa24881e004fdbc5550932bb2879129351c21432f21f32d94bf11603bebd9f5c0"
+
+# aptosnames creator
+# see https://explorer.aptoslabs.com/account/0x867ed1f6bf916171b1de3ee92849b8978b7d1b9e0a8cc982a3d19d535dfd9c0c
+# 0x867ed1f6bf916171b1de3ee92849b8978b7d1b9e0a8cc982a3d19d535dfd9c0c::token_helper::CollectionCapabilityV1
+aptosnames_creator = "0x305a97874974fdb9a7ba59dc7cab7714c8e8e00004ac887b6e348496e1981838"
+
