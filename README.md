@@ -541,3 +541,38 @@
      }
    }
    ```
+12. Aptos 传递数组
+```move
+module 0x0::vector {
+    use std::string::String;
+    use std::vector;
+
+    public entry fun vec(
+        _from: &signer,
+        _collection_name: String,
+        token_names: vector<String>,
+        token_uris: vector<String>,
+        addresses: vector<address>,
+        _token_des: String
+    ) {
+        assert!(vector::length(&token_names) > 0, 1);
+        assert!(vector::length(&token_uris) > 0, 2);
+        assert!(vector::length(&addresses) > 0, 3);
+    }
+} 
+```
+```js
+    let collection_name = BCS.bcsSerializeStr("test collection");
+    let token_names = BCS.serializeVectorWithFunc(["token1", "token2"], "serializeStr");
+    let token_uris = BCS.serializeVectorWithFunc(["uri1", "uri2"], "serializeStr");
+    let token_des = BCS.bcsSerializeStr("test des");
+    let addresses = BCS.serializeVectorWithFunc(
+        [
+            new HexString("0xdcf3f5381c94de140d2bdf597e200cbfb3ac4ebcb7abd718e406a2d473c5de88").toUint8Array(),
+            new HexString("0x97543d1f442fb3725935b53b3612f989dd0fdaa4b855baca0c36df9a9aa23a74").toUint8Array()
+        ],
+        "serializeFixedBytes"
+    );
+```
+
+13. [Sui传递数组](./sui-vector/README.md)
