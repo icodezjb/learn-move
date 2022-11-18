@@ -575,4 +575,51 @@ module 0x0::vector {
     );
 ```
 
-13. [Sui传递数组](./sui-vector/README.md)
+13. Sui传递数组
+```move
+module 0x0::vector {
+    use std::vector;
+    use sui::coin::Coin;
+    use sui::sui::SUI;
+    use sui::pay;
+
+    public entry fun vec(
+        self: &mut Coin<SUI>,
+        vec_bool: vector<bool>,
+        vec_u8: vector<u8>,
+        vec_u64: vector<u64>,
+        vec_address: vector<address>,
+        vec_coins: vector<Coin<SUI>>
+    ) {
+        assert!(vector::length(&vec_bool) > 0, 1);
+        assert!(vector::length(&vec_u8) > 0, 2);
+        assert!(vector::length(&vec_u64) > 0, 3);
+        assert!(vector::length(&vec_address) > 0, 4);
+
+        pay::join_vec(self, vec_coins)
+    }
+}
+```
+[sui传递vector<u8>有三种方式]((./sui-vector/README.md))
+
+`ascii字符串`, `hex字符串`, `vec<u8> sui-json`
+
+下面是hex字符串格式
+```js
+const txn = await signer.executeMoveCallWithRequestType({
+        packageObjectId: '0xce6cab8be08edcfb12e2f26c2ac288de35a0b9a6',
+        module: 'vector',
+        function: 'vec',
+        typeArguments: [],
+        arguments: [
+           '0xdbdae62c692525b893b33e413664946ef07ef30c', 
+           '[true]',
+           '0x1234',
+           '[78, 89, 32]',
+           '["0xb811881d75c77acec51ff1622a3cc1bd6b247707"]',
+           '["0xccfe11e303b81749a2c3a1288e73e4cf88843844"]'
+        ],
+        gasBudget: DEFAULT_GAS_BUDGET,
+        gasPayment: coins[0].objectId,
+});
+```
