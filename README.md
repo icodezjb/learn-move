@@ -575,7 +575,7 @@ module 0x0::vector {
     );
 ```
 
-13. Sui传递数组
+13. Sui 传递数组
 ```move
 module 0x0::vector {
     use std::vector;
@@ -623,3 +623,5 @@ const txn = await signer.executeMoveCallWithRequestType({
         gasPayment: coins[0].objectId,
 });
 ```
+
+14. [Aptos getTableItem](./aptosname-transfer/src/get_token.js)
