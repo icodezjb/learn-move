@@ -625,3 +625,5 @@ const txn = await signer.executeMoveCallWithRequestType({
 ```
 
 14. [Aptos getTableItem](./aptosname-transfer/src/get_token.js)
+
+15. [Sui 获取table或bag的所有key](./sui-scripts/src/get_objects.js)
