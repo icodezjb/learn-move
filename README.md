@@ -181,7 +181,12 @@
         -X POST \
         -d '{"FixedAmountRequest":{"recipient":"0x017614990a894ad7c26f5bd174ea9c8095b06242"}}' \
         "http://127.0.0.1:5003/gas"
-   
+      
+      (8) 多个网络环境切换
+      sui client new-env --alias testnet --rpc https://fullnode.testnet.sui.io:443
+      sui client new-env --alias local --rpc http://127.0.0.1:9000
+      sui client switch --env testnet
+    
     4. 普通转账
       (1) 查看默认账户(用于签名交易)
       $ sui client active-address
