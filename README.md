@@ -140,7 +140,7 @@
       (2) 检查代理, 浏览器打开 https://explorer.devnet.sui.io/, 选择Local
 
       (3) 执行命令, 领测试币
-      $ curl -H "Content-Type: application/json" -X POST -d '{"recipient":"0x017614990a894ad7c26f5bd174ea9c8095b06242"}' "http://127.0.0.1:9123/faucet"
+      $ curl -H "Content-Type: application/json" -X POST -d '{"recipient":"0x017614990a894ad7c26f5bd174ea9c8095b06242"}' "http://127.0.0.1:9123/gas"
       {"ok":true}
     
     3. 本地测试网搭建2(重启后数据可复用)
