@@ -632,3 +632,19 @@ const txn = await signer.executeMoveCallWithRequestType({
 14. [Aptos getTableItem](./aptosname-transfer/src/get_token.js)
 
 15. [Sui 获取table或bag的所有key](./sui-scripts/src/get_objects.js)
+
+16. dynamic_field和dynamic_object_field的区别
+```txt
+1. table和bag的区别
+table的key和value类型初始化的时候就已经确定了，table只能存储同类型的key和value,
+bag初始化的时候未限制具体类型，bag能存储不同类型的key和value。
+
+2. dynamic_field和dynamic_object_field的区别
+类似的table和object_table，bag和object_bag的区别，本质上也是dynamic_field和dynamic_object_field的区别
+(1) key的处理: 为了防止和dynamic_field key值冲突, dynamic_object_field对key类型进行了Wrapper。
+(2) 加入存储的是一个object:
+用dynamic_field存储，通过dynamic_field key值可以直接取到这个object的值，此时用object id在链上进行查询是查不到的
+用dynamic_object_field存储, 通过dynamic_object_field key值取到的是这个object id, 需要用object id在链上再次查询才能获取到这个object的值
+```
+
+17. [链下计算table<u64, _>和object_table<u64, _>的key](./hash_type_and_key/README.md)

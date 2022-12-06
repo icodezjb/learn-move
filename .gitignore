@@ -1,3 +1,4 @@
 *.aptos/
 */build/
 */node_modules/
+*target/

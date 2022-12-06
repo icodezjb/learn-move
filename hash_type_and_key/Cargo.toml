@@ -1,0 +1,17 @@
+[package]
+name = "hash_type_and_key"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[workspace.dependencies]
+move-core-types = { git = "https://github.com/move-language/move", rev = "0800fc79a98ca304bd449878f545cdcaff6f94bb", features = ["address20"] }
+move-vm-types = { git = "https://github.com/move-language/move", rev = "0800fc79a98ca304bd449878f545cdcaff6f94bb" }
+
+[dependencies]
+bcs = "0.1.4"
+hex = "0.4.3"
+sha3 = "0.10.6"
+move-core-types.workspace = true
+move-vm-types.workspace = true
