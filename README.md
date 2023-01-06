@@ -140,7 +140,7 @@
       (2) 检查代理, 浏览器打开 https://explorer.devnet.sui.io/, 选择Local
 
       (3) 执行命令, 领测试币
-      $ curl -H "Content-Type: application/json" -X POST -d '{"recipient":"0x017614990a894ad7c26f5bd174ea9c8095b06242"}' "http://127.0.0.1:9123/gas"
+      $ curl -H "Content-Type: application/json" -X POST -d '{"FixedAmountRequest":{"recipient":"0x017614990a894ad7c26f5bd174ea9c8095b06242"}}' "http://127.0.0.1:9123/gas"
       {"ok":true}
     
     3. 本地测试网搭建2(重启后数据可复用)
@@ -648,3 +648,5 @@ bag初始化的时候未限制具体类型，bag能存储不同类型的key和va
 ```
 
 17. [链下计算table<u64, _>和object_table<u64, _>的key](./hash_type_and_key/README.md)
+
+18. [通过sui_devInspectMoveCall可以链下调用move合约中的public函数](./sui-scripts/src/devInspectMoveCall.js)

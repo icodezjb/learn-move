@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@mysten/sui.js": "^0.17.1"
+    "@mysten/sui.js": "^0.21.0",
+    "ts-retry-promise": "^0.7.0"
   }
 }
