@@ -111,3 +111,10 @@ sui client call \
                 )
             }
 ```
+
+
+# sui typejs sdk
+
+```bash
+ts-node ./call.ts
+```
