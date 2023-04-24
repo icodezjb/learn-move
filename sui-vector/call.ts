@@ -22,14 +22,13 @@ async function main() {
     const max_pure_argument_size = 16 * 1024
 
     let vec_address: string[] = []
-    let vec_u8: number[] = []
     for (var i=0; i < 500; i++) {
         vec_address.push("0x28b140d21386129f4e08380cadbbd560df92e01b28a53fc96d97464f384d923b")
-        vec_u8.push(2)
     }
 
     const vec_address_bytes = bcs.ser('vector<address>', vec_address, {maxSize: max_pure_argument_size}).toBytes()
-    const vec_u8_bytes = bcs.ser('vector<u8>', vec_u8, {maxSize: max_pure_argument_size}).toBytes()
+
+    const vec_u8_bytes = Array.from(Buffer.from("中文字体", "utf8"))
 
     const coins = txb.splitCoins(
         txb.gas,
